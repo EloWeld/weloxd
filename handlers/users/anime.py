@@ -26,11 +26,10 @@ async def anime(message: types.Message):
 @dp.message_handler(state=Anime.Anime)
 async def anime_title(message: types.Message, state: FSMContext):
     msg = message.text
-    await state.update_data(anime=int(msg) - 1)
-
-    data = await state.get_data()
 
     try:
+        await state.update_data(anime=int(msg) - 1)
+        data = await state.get_data()
         if 'season' in ANIME_LIST[data["anime"]].keys():
             seasons_count = len(ANIME_LIST[data["anime"]]["season"])
             await message.answer(f'<b>{ANIME_LIST[data["anime"]]["caption"]}</b>\n'
@@ -61,11 +60,11 @@ async def anime_title(message: types.Message, state: FSMContext):
 @dp.message_handler(state=Anime.Season)
 async def anime_season(message: types.Message, state: FSMContext):
     msg = message.text
-    await state.update_data(sez=msg)
-
-    data = await state.get_data()
 
     try:
+        await state.update_data(sez=msg)
+
+        data = await state.get_data()
         title = ANIME_LIST[data["anime"]]["caption"]
         episodes_count = len(ANIME_LIST[data["anime"]]["season"][data["sez"]])
         await message.answer(

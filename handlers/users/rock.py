@@ -7,11 +7,28 @@ from data.phrases import TASK_LIST
 from loader import dp
 from aiogram import types
 
+from middlewares.database import MainDB
+
 
 @dp.message_handler(Command('topmusic'), )
 @dp.message_handler(Text(equals='Музло', ignore_case=True))
 async def cmd_task(message: types.Message):
-    await message.answer_audio(audio=InputFile('music/mur.mp3'),
-                               caption='Услада для ушей ♥',
-                               title='Мурчание серокрылого',
-                               thumb=InputFile('photos/cat.jpg'))
+    tracks = MainDB.select_all_tracks()
+    random_track_id = random.randrange(0, MainDB.count_all_tracks()[0][0])
+    random_track = {'audio': tracks[random_track_id][0],
+                    'img': tracks[random_track_id][1],
+                    'title': tracks[random_track_id][2],
+                    'local': tracks[random_track_id][3] is not None,}
+    if random_track['local']:
+        print(random_track)
+        await message.answer_audio(audio=open(random_track['audio'], "r"),
+                                   caption='Услада для ушей ♥',
+                                   title=random_track['title'],
+                                   thumb=None,
+                                   )
+    else:
+        await message.answer_audio(audio=random_track['audio'],
+                                   caption='Услада для ушей ♥',
+                                   title=random_track['title'],
+                                   thumb=random_track['img'],
+                                   )

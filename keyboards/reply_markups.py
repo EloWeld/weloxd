@@ -10,6 +10,7 @@ reply_start_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
       [
             KeyboardButton(text='Zalgo'),
             KeyboardButton(text='Музло'),
+            KeyboardButton(text='Покричать на всех'),
             KeyboardButton(text='Помощь'),
       ]
   ])

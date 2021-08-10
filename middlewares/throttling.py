@@ -6,6 +6,8 @@ from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.utils.exceptions import Throttled
 
+from middlewares.database import MainDB
+
 
 class ThrottlingMiddleware(BaseMiddleware):
     """
@@ -34,6 +36,7 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def message_throttled(self, message: types.Message, throttled: Throttled):
         handler = current_handler.get()
+        MainDB.add_message(message)
         dispatcher = Dispatcher.get_current()
         if handler:
             key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")

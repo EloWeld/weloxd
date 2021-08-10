@@ -5,7 +5,12 @@ class ZalgoMode(StatesGroup):
     Mode = State()
     Text = State()
 
+
 class Anime(StatesGroup):
     Anime = State()
     Season = State()
     Episode = State()
+
+
+class Broadcast(StatesGroup):
+    Enter = State()

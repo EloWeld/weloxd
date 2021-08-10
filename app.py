@@ -1,6 +1,7 @@
 from utils.set_bot_commands import set_default_commands
 import sqlite3
 
+
 async def on_startup(dp):
     import filters
     import middlewares

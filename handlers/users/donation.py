@@ -1,11 +1,14 @@
 from aiogram import types
+from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery, PreCheckoutQuery, ContentType, LabeledPrice
 
 from loader import dp, bot
+from middlewares.database import MainDB
 
 
 @dp.callback_query_handler(text='donate')
+@dp.message_handler(Command('donate'))
 async def donate_hand(call: CallbackQuery):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     await bot.send_invoice(chat_id=call.from_user.id,
@@ -27,4 +30,6 @@ async def process_pre_checkout_query(pcq: PreCheckoutQuery):
 @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
 async def process_pay(message: Message):
     if message.successful_payment.invoice_payload == 'donate_payload':
-        await message.answer(text='Ураааа!!! Спасибо за донатик! Ты лапочка ♥')
+        await message.answer(text='Ураааа!!! Спасибо за донатик! Ты лапочка ♥\n'
+                                  'Подписка подключена')
+        MainDB.update_subscription(id=message.from_user.id, subscription=1)
