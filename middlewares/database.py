@@ -57,6 +57,9 @@ class Database():
     def get_banned_users(self):
         return [user[0] for user in self.select_all_users() if user[3] == 1]
 
+    def users_ids(self):
+        return [item[0] for item in self.select_all_users()]
+
     def update_subscription(self, id, subscription):
         sql = "UPDATE users SET subscription=? WHERE id=?"
         return self.execute(sql, parameters=(subscription, id), commit=True)

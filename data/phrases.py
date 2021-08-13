@@ -44,8 +44,24 @@ ANIME_LIST = [
      'photo': 'https://gen.jut.su/uploads/animethumbs/anime_bungou-stray-dogs.jpg',
      'season': {
          '1': [f'https://jut.su/bungou-stray-dogs/season-1/episode-{ep}.html' for ep in range(1, 12 + 1)],
-         '2': [f'https://jut.su/bungou-stray-dogs/season-1/episode-{ep}.html' for ep in range(1, 12 + 1)],
-         '3': [f'https://jut.su/bungou-stray-dogs/season-1/episode-{ep}.html' for ep in range(1, 12 + 1)],
+         '2': [f'https://jut.su/bungou-stray-dogs/season-2/episode-{ep}.html' for ep in range(1, 12 + 1)],
+         '3': [f'https://jut.su/bungou-stray-dogs/season-3/episode-{ep}.html' for ep in range(1, 12 + 1)],
      }
+     },
+    {'caption': 'Кланнад',
+     'photo': 'https://gen.jut.su/uploads/animethumbs/anime_clannad.jpg',
+     'season': {
+         '1': [f'https://jut.su/clanad/season-1/episode-{ep}.html' for ep in range(1, 24 + 1)],
+         '2': [f'https://jut.su/clanad/season-2/episode-{ep}.html' for ep in range(1, 25 + 1)],
+         'Clanad film': 'https://jut.su/clanad/film-1.html',
+     }
+     },
+    {'caption': 'Devil may cry',
+     'photo': 'https://gen.jut.su/uploads/animethumbs/anime_devil-may-cry.jpg',
+     'episodes': [f'https://jut.su/devil-may-cry/episode-{ep}.html' for ep in range(1, 12 + 1)]
+     },
+    {'caption': 'Hellsing',
+     'photo': 'https://gen.jut.su/uploads/animethumbs/anime_hellsing.jpg',
+     'episodes': [f'https://jut.su/hellsing/episode-{ep}.html' for ep in range(1, 13 + 1)]
      },
 ]

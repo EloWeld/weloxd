@@ -32,8 +32,13 @@ async def anime_title(message: types.Message, state: FSMContext):
         data = await state.get_data()
         if 'season' in ANIME_LIST[data["anime"]].keys():
             seasons_count = len(ANIME_LIST[data["anime"]]["season"])
-            await message.answer(f'<b>{ANIME_LIST[data["anime"]]["caption"]}</b>\n'
-                                 f'Now enter season...[Max - {seasons_count}]')
+            films = [x for x in ANIME_LIST[data["anime"]]["season"] if not x.isdigit()]
+            print(films)
+            seasons_count -= len(films)
+            films_msg = '\n'.join([f'Film - <b><u>{f}</u></b>' for f in films])
+            answer = f'<b>{ANIME_LIST[data["anime"]]["caption"]}</b>\n' \
+                     f'Now enter season...[Max - {seasons_count}]\n' + films_msg
+            await message.answer(answer)
             await Anime.Season.set()
         elif 'link' in ANIME_LIST[data["anime"]].keys():
             await message.answer_photo(photo=ANIME_LIST[data['anime']]['photo'],
@@ -66,6 +71,21 @@ async def anime_season(message: types.Message, state: FSMContext):
 
         data = await state.get_data()
         title = ANIME_LIST[data["anime"]]["caption"]
+        if isinstance(ANIME_LIST[data["anime"]]["season"][data["sez"]], type('')):
+            await message.answer_photo(photo=ANIME_LIST[data['anime']]['photo'],
+                                       caption=f"<b>{ANIME_LIST[data['anime']]['caption']}</b>\n"
+                                               f"Film: <b>{data['sez']}</b>\n"
+                                               f"♥ Смотри на здоровье ♥",
+                                       reply_markup=
+                                       InlineKeyboardMarkup(inline_keyboard=[
+                                           [InlineKeyboardButton(text='Смотреть аниме',
+                                                                 url=ANIME_LIST
+                                                                 [data['anime']]
+                                                                 ['season']
+                                                                 [data['sez']])]
+                                       ]))
+            await state.finish()
+            return
         episodes_count = len(ANIME_LIST[data["anime"]]["season"][data["sez"]])
         await message.answer(
             f'<b>{title}</b>\n'
@@ -122,7 +142,7 @@ async def anime_episode(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(Command('asdasd'))
-async def anime_episodeas(message: types.Message, state: FSMContext):
+async def anime_episodes(message: types.Message, state: FSMContext):
     data = await state.get_data()
     try:
         await state.update_data(episode=data['episode'] + 1)

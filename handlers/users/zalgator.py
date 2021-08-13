@@ -18,9 +18,9 @@ async def cmd_zalgo(message: types.Message):
     await message.answer('Добро пожаловать в Zalgo-фикатор! Напишите степень изменения текста\nЧтобы выйти из режима - команда /stop', reply_markup=zalgo_menu)
     await ZalgoMode.Text.set()
 
-@dp.message_handler(Text(equals=['1️⃣', '2️⃣', '3️⃣']), state=ZalgoMode.Text)
+@dp.message_handler(Text(equals=['1️⃣', '2️⃣', '3️⃣', '1', '2', '3']), state=ZalgoMode.Text)
 async def zalgo_mode(message: types.Message, state: FSMContext):
-    craziness = 1 if message.text == '1️⃣' else 3 if message.text == '2️⃣' else 5 if message.text == '3️⃣' else 0
+    craziness = 1 if message.text in ['1️⃣', '1'] else 3 if message.text in ['2️⃣', '2'] else 5 if message.text in ['3️⃣', '3']else 0
     await state.update_data(craziness=craziness)
     await message.answer(f'Уровень безумия: {message.text}')
 

@@ -52,6 +52,7 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def message_throttled_two(self, message: types.Message, throttled: Throttled):
         delta = throttled.rate - throttled.delta
+        MainDB.add_message(message)
         if throttled.exceeded_count == 2:
             await message.reply('Слишком много команд!!')
         elif throttled.exceeded_count == 3:
