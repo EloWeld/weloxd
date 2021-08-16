@@ -2,7 +2,6 @@ from aiogram import types
 from aiogram.dispatcher.filters.builtin import Command, Text
 
 from loader import dp
-from filters import IsPrivate
 
 
 @dp.message_handler(Command('help'))

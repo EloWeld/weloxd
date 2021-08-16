@@ -1,4 +1,4 @@
-from utils.set_bot_commands import set_default_commands
+from backend.set_bot_commands import set_default_commands
 import sqlite3
 
 
@@ -8,7 +8,7 @@ async def on_startup(dp):
     filters.setup(dp)
     middlewares.setup(dp)
 
-    from utils.notify_admins import on_startup_notify
+    from backend.notify_admins import on_startup_notify
     await on_startup_notify(dp)
     await set_default_commands(dp)
 

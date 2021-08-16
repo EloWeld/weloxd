@@ -1,6 +1,4 @@
-from aiogram import types
 from aiogram.dispatcher.filters import Command
-from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery, PreCheckoutQuery, ContentType, LabeledPrice
 
 from loader import dp, bot

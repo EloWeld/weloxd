@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+import backend
 
 inline_start_menu = InlineKeyboardMarkup(inline_keyboard=[
       [

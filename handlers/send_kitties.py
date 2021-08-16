@@ -1,14 +1,11 @@
-import sqlite3
-
-from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Text
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from loader import dp
 from aiogram import types
-import random
-from data.phrases import KITTY_LIST
+from src.data.phrases import KITTY_LIST
 from middlewares.database import MainDB
+
+import random
 
 
 @dp.message_handler(Command('kitty'))

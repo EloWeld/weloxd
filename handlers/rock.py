@@ -2,11 +2,8 @@ import random
 
 from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import InputFile
-
-from data.phrases import TASK_LIST
 from loader import dp
 from aiogram import types
-
 from middlewares.database import MainDB
 
 
@@ -32,3 +29,19 @@ async def cmd_task(message: types.Message):
                                    title=random_track['title'],
                                    thumb=random_track['img'],
                                    )
+
+
+@dp.message_handler(Command('unikum'))
+@dp.message_handler(Text(equals=['Кто молодец?', 'Кто', 'молодец', 'Кто тут у нас умница?'], ignore_case=True))
+async def cmd_task(message: types.Message):
+    await message.answer_document(document=InputFile('photos/alien.gif'),
+                               caption='Вот вверху - умница!',
+                               )
+
+
+@dp.message_handler(Command('unikum'))
+@dp.message_handler(Text(equals=['Кто молодец?', 'Кто', 'молодец', 'Кто тут у нас умница?'], ignore_case=True))
+async def cmd_task(message: types.Message):
+    print()
+    place = 57
+    await message.answer(f'{place}')

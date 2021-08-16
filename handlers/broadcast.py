@@ -1,22 +1,19 @@
-import random
-
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command, Text
 from aiogram.types import InputFile, Message
 
-from data.phrases import TASK_LIST
 from filters import IsAdmin, IsPrivate
-from keyboards.reply_markups import reply_start_menu
+from nav.reply_markups import base_menu
 from loader import dp, bot
 from aiogram import types
 
 from middlewares.database import MainDB
 from states.states import Broadcast
-from utils.helpers import del_message
+from backend.helpers import del_message
 
 
 @dp.message_handler(Command('broadcast'), IsPrivate())
-@dp.message_handler(Text(equals=['Кричать', 'Орать', 'Визжать', 'Пиздеть', 'Покричать на всех']), IsPrivate())
+@dp.message_handler(Text(equals=['Кричать', 'Орать', 'Визжать', 'Пиздеть', 'Кричалка на юзеров']), IsPrivate())
 async def broadcast(message: Message):
     if message.from_user.id not in MainDB.users_ids():
         await message.answer('Для того чтобы кричать, нужно сначала зарегаться в боте, просто пропиши:\n/start')
@@ -37,7 +34,7 @@ async def broadcast(message: types.Message, state: FSMContext):
     for user_entity in users:
         await bot.send_message(chat_id=user_entity[0], text=f'Кот {message.from_user.full_name} прокричал на всю деревню: \n<b>{message.text}</b>')
 
-    msg = await message.answer('Твоё сообщение разосланно этим никам: ' + ', '.join([f"@{x[1]}" for x in users]), reply_markup=reply_start_menu)
+    msg = await message.answer('Твоё сообщение разосланно этим никам: ' + ', '.join([f"@{x[1]}" for x in users]), reply_markup=base_menu)
     await state.finish()
 
     await del_message(msg, 5)

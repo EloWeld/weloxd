@@ -2,7 +2,7 @@ import random
 
 from aiogram.dispatcher.filters import Command, Text
 
-from data.phrases import TASK_LIST
+from src.data.phrases import TASK_LIST
 from loader import dp
 from aiogram import types
 

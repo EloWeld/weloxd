@@ -1,1 +1,1 @@
-from .states import ZalgoMode
+from .states import StylistMode

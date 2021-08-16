@@ -1,19 +1,58 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text, Command
-from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import Message, CallbackQuery, PreCheckoutQuery, ContentType, InlineKeyboardMarkup, \
-    InlineKeyboardButton, MessageEntity
-from aiogram.utils.emoji import emojize
-from data.phrases import ANIME_LIST
+from aiogram.types import InlineKeyboardMarkup, \
+    InlineKeyboardButton
 
-from loader import dp, bot
-from states.states import Anime
+import nav
+from src.data.phrases import ANIME_LIST, FILM_LIST
+
+from loader import dp
+from states.states import Anime, Film
 
 
-@dp.message_handler(Text(equals='Аниме', ignore_case=True))
-async def anime(message: types.Message):
-    await message.answer(f'Enter your title number...')
+@dp.message_handler(Text(equals='🕶Смотрелка🎞', ignore_case=True))
+async def viewer_menu(message: types.Message):
+    await message.answer(f'Фильм или аниме?', reply_markup=nav.viewer_menu)
+
+
+@dp.message_handler(Text(equals='😐Фильм😐', ignore_case=True))
+async def viewer_film(message: types.Message):
+    await message.answer(f'Введи название фильма')
+
+    txt = ''
+    for i in range(len(FILM_LIST)):
+        txt += f'<b>{str(i + 1)}</b> - {FILM_LIST[i]["caption"]}\n'
+    await message.answer(txt)
+
+    await Film.Film.set()
+
+
+@dp.message_handler(state=Film.Film)
+async def film_title(message: types.Message, state: FSMContext):
+    msg = message.text
+
+    try:
+        await state.update_data(film=int(msg) - 1)
+        data = await state.get_data()
+        if 'link' in FILM_LIST[data["film"]].keys():
+            await message.answer_photo(photo=FILM_LIST[data['film']]['photo'],
+                                       caption=f"<b>{FILM_LIST[data['film']]['caption']}</b>\n"
+                                               f"♥ Надеемся тебе зайдет ♥\n",
+                                       reply_markup=
+                                       InlineKeyboardMarkup(row_width=3, inline_keyboard=[
+                                           [InlineKeyboardButton(text='Смотреть фильм',
+                                                                 url=FILM_LIST[data['film']]['link'])]
+                                       ]))
+            await state.finish()
+    except:
+        await message.answer('Введи нормальный ответ!')
+        await message.delete()
+
+
+@dp.message_handler(Text(equals='😎Аниме😎', ignore_case=True))
+async def viewer_anime(message: types.Message):
+    await message.answer(f'Введи название тайтла')
 
     txt = ''
     for i in range(len(ANIME_LIST)):
@@ -37,7 +76,7 @@ async def anime_title(message: types.Message, state: FSMContext):
             seasons_count -= len(films)
             films_msg = '\n'.join([f'Film - <b><u>{f}</u></b>' for f in films])
             answer = f'<b>{ANIME_LIST[data["anime"]]["caption"]}</b>\n' \
-                     f'Now enter season...[Max - {seasons_count}]\n' + films_msg
+                     f'Теперь введи сезон...[Max - {seasons_count}]\n' + films_msg
             await message.answer(answer)
             await Anime.Season.set()
         elif 'link' in ANIME_LIST[data["anime"]].keys():
@@ -55,7 +94,7 @@ async def anime_title(message: types.Message, state: FSMContext):
             episodes_count = len(ANIME_LIST[data["anime"]]["episodes"])
             await message.answer(
                 f'<b>{title}</b>\n'
-                f'Now enter episode...[Max = {episodes_count}]')
+                f'Теперь введи эпизод...[Max = {episodes_count}]')
             await Anime.Episode.set()
     except:
         await message.answer('Введи нормальный ответ!')
@@ -74,7 +113,7 @@ async def anime_season(message: types.Message, state: FSMContext):
         if isinstance(ANIME_LIST[data["anime"]]["season"][data["sez"]], type('')):
             await message.answer_photo(photo=ANIME_LIST[data['anime']]['photo'],
                                        caption=f"<b>{ANIME_LIST[data['anime']]['caption']}</b>\n"
-                                               f"Film: <b>{data['sez']}</b>\n"
+                                               f"Фильм: <b>{data['sez']}</b>\n"
                                                f"♥ Смотри на здоровье ♥",
                                        reply_markup=
                                        InlineKeyboardMarkup(inline_keyboard=[
@@ -89,8 +128,8 @@ async def anime_season(message: types.Message, state: FSMContext):
         episodes_count = len(ANIME_LIST[data["anime"]]["season"][data["sez"]])
         await message.answer(
             f'<b>{title}</b>\n'
-            f'Season: <b>{msg}</b>\n'
-            f'Now enter episode...[Max = {episodes_count}]')
+            f'Сезон: <b>{msg}</b>\n'
+            f'Теперь введи эпизод...[Max = {episodes_count}]')
 
         await Anime.Episode.set()
     except:
@@ -109,8 +148,8 @@ async def anime_episode(message: types.Message, state: FSMContext):
         if 'season' in ANIME_LIST[data["anime"]].keys():
             await message.answer_photo(photo=ANIME_LIST[data['anime']]['photo'],
                                        caption=f"<b>{ANIME_LIST[data['anime']]['caption']}</b>\n"
-                                               f"Season: <b>{data['sez']}</b>\n"
-                                               f"Episode: <b>{data['ep']}</b>\n"
+                                               f"Сезон: <b>{data['sez']}</b>\n"
+                                               f"Эпизод: <b>{data['ep']}</b>\n"
                                                f"♥ Смотри на здоровье ♥",
                                        reply_markup=
                                        InlineKeyboardMarkup(row_width=3, inline_keyboard=[
@@ -125,7 +164,7 @@ async def anime_episode(message: types.Message, state: FSMContext):
         elif 'episodes' in ANIME_LIST[data["anime"]].keys():
             await message.answer_photo(photo=ANIME_LIST[data['anime']]['photo'],
                                        caption=f"<b>{ANIME_LIST[data['anime']]['caption']}</b>\n"
-                                               f"Episode: <b>{data['ep']}</b>\n"
+                                               f"Эпизод: <b>{data['ep']}</b>\n"
                                                f"♥ Смотри на здоровье ♥",
                                        reply_markup=
                                        InlineKeyboardMarkup(row_width=3, inline_keyboard=[
