@@ -44,3 +44,9 @@ viewer_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
             KeyboardButton(text='😐Фильм😐'),
       ]
 ])
+
+broadcasting_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
+      [
+            KeyboardButton(text='🌼 Закрыть варежку и сдохнуть 🌸'),
+      ]
+  ])
