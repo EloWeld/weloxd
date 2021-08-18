@@ -9,8 +9,11 @@ from .send_kitties import dp
 from .start import dp
 from .task import dp
 from .text_beautifier import dp
-from .unknown_handler import dp
 from .vk_music import dp
 from .weather import dp
+from .admin import dp
+
+
+from .unknown_handler import dp
 
 __all__ = ["dp"]

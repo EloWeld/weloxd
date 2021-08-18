@@ -16,7 +16,7 @@ import backend.set_bot_commands
 async def cmd_text_stylist(message: types.Message):
     await backend.set_bot_commands.set_exit_commands(dp)
     await message.answer('Добро пожаловать в Стилизатор текста! Введите текст для стилизации\n'
-                         'Чтобы выйти из режима - команда /stop', reply_markup=nav.stylist_menu )
+                         'Чтобы выйти из режима - команда /stop', reply_markup=nav.exit_menu)
     await StylistMode.Text.set()
 
 
@@ -31,7 +31,7 @@ async def stylist_mode(message: types.Message, state: FSMContext):
     stylized_list = backend.Stylist.get_stylized()
     for style in stylized_list:
         await message.answer(style)
-    await message.answer(f'Ваш текст в разных стилях.', reply_markup=nav.stylist_menu)
+    await message.answer(f'Ваш текст в разных стилях.', reply_markup=nav.exit_menu)
 
 
 @dp.message_handler(Command('stop'), state=StylistMode.Text)

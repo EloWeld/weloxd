@@ -20,6 +20,10 @@ async def cmd_weather(message: types.Message):
 
 def get_weather_from_json(data):
     result = dict()
+    print(result)
+    if result == {}:
+        return None
+
     result['description'] = data['weather'][0]['description']
     result['temp'] = data['main']['temp']
     result['temp_min'] = data['main']['temp_min']
@@ -39,6 +43,12 @@ def get_weather_from_json(data):
 @dp.message_handler(state=Weather.City)
 async def state_weather(message: types.Message, state: FSMContext):
     text = message.text
+
+    if text == '🛑STOP🛑':
+        await message.answer('Вы вернулись в главное меню', reply_markup=nav.base_menu)
+        await state.finish()
+        return
+
     await state.update_data(city=text)
 
     city = text
@@ -47,6 +57,10 @@ async def state_weather(message: types.Message, state: FSMContext):
                                params={'q': city, 'units': 'metric', 'lang': 'ru', 'APPID': appid})
 
     weather = get_weather_from_json(weather_req.json())
+    if weather == None:
+        await message.answer('Это не город!')
+        return
+
     try:
         await message.answer(f'Итак, сегодня тебя ждёт погода:\n'
                              f'<b>{str(weather["description"]).capitalize()}</b>\n'

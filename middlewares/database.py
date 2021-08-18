@@ -54,8 +54,16 @@ class Database():
         sql, parameters = self.format_args(sql, kwargs)
         return self.execute(sql, parameters, fetchall=True)
 
+    def userturple_by_id(self, id):
+        sql = 'SELECT * FROM users WHERE id=?'
+        return self.execute(sql, parameters=(id,), fetchall=True)
+
+    def userturple_by_username(self, username):
+        sql = 'SELECT * FROM users WHERE username=?'
+        return self.execute(sql, parameters=(username,), fetchall=True)
+
     def get_banned_users(self):
-        return [user[0] for user in self.select_all_users() if user[3] == 1]
+        return [user[0] for user in self.select_all_users() if user[3] != 0]
 
     def users_ids(self):
         return [item[0] for item in self.select_all_users()]
@@ -63,6 +71,10 @@ class Database():
     def update_subscription(self, id, subscription):
         sql = "UPDATE users SET subscription=? WHERE id=?"
         return self.execute(sql, parameters=(subscription, id), commit=True)
+
+    def update_ban(self, id, ban_count):
+        sql = "UPDATE users SET banned=? WHERE id=?"
+        return self.execute(sql, parameters=(ban_count, id), commit=True)
 
     def add_message(self, message : types.Message):
         sql = "INSERT INTO user_messages(id, message, date) VALUES(?, ?, ?)"

@@ -11,6 +11,11 @@ from loader import dp
 from states.states import Anime, Film
 
 
+@dp.message_handler(Text(equals='🛑STOP🛑', ignore_case=True))
+async def viewer_exit(message: types.Message):
+    await message.answer('Вы вернулись в главное меню', reply_markup=nav.base_menu)
+
+
 @dp.message_handler(Text(equals='🕶Смотрелка🎞', ignore_case=True))
 async def viewer_menu(message: types.Message):
     await message.answer(f'Фильм или аниме?', reply_markup=nav.viewer_menu)
@@ -57,7 +62,7 @@ async def viewer_anime(message: types.Message):
     txt = ''
     for i in range(len(ANIME_LIST)):
         txt += f'<b>{str(i + 1)}</b> - {ANIME_LIST[i]["caption"]}\n'
-    await message.answer(txt)
+    await message.answer(txt, reply_markup=nav.exit_menu)
 
     await Anime.Anime.set()
 
@@ -65,6 +70,11 @@ async def viewer_anime(message: types.Message):
 @dp.message_handler(state=Anime.Anime)
 async def anime_title(message: types.Message, state: FSMContext):
     msg = message.text
+
+    if msg == '🛑STOP🛑':
+        await message.answer('Вы вернулись в главное меню', reply_markup=nav.base_menu)
+        await state.finish()
+        return
 
     try:
         await state.update_data(anime=int(msg) - 1)
@@ -105,6 +115,11 @@ async def anime_title(message: types.Message, state: FSMContext):
 async def anime_season(message: types.Message, state: FSMContext):
     msg = message.text
 
+    if msg == '🛑STOP🛑':
+        await message.answer('Вы вернулись в главное меню', reply_markup=nav.base_menu)
+        await state.finish()
+        return
+
     try:
         await state.update_data(sez=msg)
 
@@ -129,7 +144,7 @@ async def anime_season(message: types.Message, state: FSMContext):
         await message.answer(
             f'<b>{title}</b>\n'
             f'Сезон: <b>{msg}</b>\n'
-            f'Теперь введи эпизод...[Max = {episodes_count}]')
+            f'Теперь введи эпизод...[Max = {episodes_count}]', reply_markup=nav.exit_menu)
 
         await Anime.Episode.set()
     except:
@@ -140,8 +155,12 @@ async def anime_season(message: types.Message, state: FSMContext):
 @dp.message_handler(state=Anime.Episode)
 async def anime_episode(message: types.Message, state: FSMContext):
     msg = message.text
-    await state.update_data(ep=msg)
+    if msg == '🛑STOP🛑':
+        await message.answer('Вы вернулись в главное меню', reply_markup=nav.base_menu)
+        await state.finish()
+        return
 
+    await state.update_data(ep=msg)
     data = await state.get_data()
 
     try:
@@ -178,12 +197,3 @@ async def anime_episode(message: types.Message, state: FSMContext):
     except:
         await message.answer('Введи нормальный ответ!')
         await message.delete()
-
-
-@dp.message_handler(Command('asdasd'))
-async def anime_episodes(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    try:
-        await state.update_data(episode=data['episode'] + 1)
-    except:
-        await state.update_data(episode=1)

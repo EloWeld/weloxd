@@ -4,6 +4,7 @@ from aiogram.types import InputFile, Message
 
 import nav
 from filters import IsAdmin, IsPrivate
+from handlers.admin import ban_by_id
 from loader import dp, bot
 from aiogram import types
 
@@ -19,8 +20,11 @@ async def broadcast(message: Message):
         await message.answer('Для того чтобы кричать, нужно сначала зарегаться в боте, просто пропиши:\n/start')
         return
 
-    if message.from_user.id in MainDB.get_banned_users():
-        await message.answer('Пхаха, чел, ты в муте, варешку свою будешь открывать на рынке')
+    user_turp = MainDB.userturple_by_id(str(message.from_user.id))
+    user_bans = user_turp[0][3]
+    if user_bans >= 5:
+        await message.answer(
+            f'Пхахах, чел, ты в муте :) Из деревни тебя депортировали на луну, потому что у тебя {user_bans} предупреждений')
         return
 
     await message.answer('Напиши, что ты хотел всем сказать, я слушаю...', reply_markup=nav.broadcasting_menu)
@@ -30,6 +34,10 @@ async def broadcast(message: Message):
 @dp.message_handler(state=Broadcast.Enter)
 async def broadcast(message: types.Message, state: FSMContext):
     users = MainDB.select_all_users()
+
+    user_turp = MainDB.userturple_by_id(str(message.from_user.id))
+    user_bans = user_turp[0][3]
+
     if message.text == '🌼 Закрыть варежку и сдохнуть 🌸':
         await message.answer('📞Поздравляю, твоё ебало сжато и скомпрессированно до минимума 🔇 \n'
                              'В деревне теперь тихо и спокойно без такого долбоёба как ты, который просто рот открыл '
@@ -37,9 +45,15 @@ async def broadcast(message: types.Message, state: FSMContext):
         await state.finish()
         return
     if message.text[0] == '/':
-        await message.answer('💢ಠ_ಠ💢\n'
-                             '😡Ага, Хацкер хуев, ещё раз так пошутишь я тебя пиздану и в бан отправлю!💢\n'
-                             '😝Команды будешь на рынке вводить, а тут деревня! Приличная община!😇', reply_markup=nav.base_menu)
+        ban_by_id(message.from_user.id)
+
+        user_turp = MainDB.userturple_by_id(str(message.from_user.id))
+        user_bans = user_turp[0][3]
+
+        await message.answer(f'💢ಠ_ಠ💢\n'
+                             f'😡Ага, Хацкер хуев, ещё раз так пошутишь я тебя пиздану и в бан отправлю!💢\n'
+                             f'У тебя итак уже [{user_bans}/5] предупреждений! Аккуратней с языком!\n'
+                             f'😝Команды будешь на рынке вводить, а тут деревня! Приличная община!😇', reply_markup=nav.base_menu)
         await state.finish()
         return
     print(users)

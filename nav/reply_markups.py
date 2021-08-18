@@ -28,11 +28,14 @@ cities_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
             KeyboardButton(text='Латвия'),
             KeyboardButton(text='Казань'),
             KeyboardButton(text='Тула'),
+      ],
+      [
+            KeyboardButton(text='🛑STOP🛑')
       ]
   ])
 
 
-stylist_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
+exit_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
       [
             KeyboardButton(text='🛑STOP🛑'),
       ]
@@ -42,6 +45,9 @@ viewer_menu = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
       [
             KeyboardButton(text='😎Аниме😎'),
             KeyboardButton(text='😐Фильм😐'),
+      ],
+      [
+            KeyboardButton(text='🛑STOP🛑')
       ]
 ])
 
